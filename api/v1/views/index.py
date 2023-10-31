@@ -1,35 +1,33 @@
 #!/usr/bin/python3
-"""
-A script that returns a json response
-"""
-
+"""index.py to connect to API"""
 from api.v1.views import app_views
-from flask import jsonify, request
+from flask import Flask, Blueprint, jsonify
 from models import storage
 
 
-@app_views.route('/status', methods=['GET'])
-def status():
-    """A function that returns a JSON status: OK
-    """
-    if request.method == 'GET':
-        response = {"status": "OK"}
-        return jsonify(response)
+hbnbText = {
+    "amenities": "Amenity",
+    "cities": "City",
+    "places": "Place",
+    "reviews": "Review",
+    "states": "State",
+    "users": "User"
+}
 
 
-@app_views.route('/api/v1/stats', methods=['GET'])
-def stats():
-    """A function that retrieves the number of each objects bu type"""
-    if request.method == 'GET':
-        response = {}
-        OBJECTS = {
-            "Amenity": "amenities",
-            "City": "cities",
-            "Place": "places",
-            "Review": "reviews",
-            "State": "states",
-            "User": "users"
-        }
-        for k, v in OBJECTS.items():
-            response[v] = storage.count(k)
-        return jsonify(response)
+@app_views.route('/status', strict_slashes=False)
+def hbnbStatus():
+    """hbnbStatus"""
+    return jsonify({"status": "OK"})
+
+
+@app_views.route('/stats', strict_slashes=False)
+def hbnbStats():
+    """hbnbStats"""
+    return_dict = {}
+    for key, value in hbnbText.items():
+        return_dict[key] = storage.count(value)
+    return jsonify(return_dict)
+
+if __name__ == "__main__":
+    pass

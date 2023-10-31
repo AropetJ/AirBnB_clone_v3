@@ -1,43 +1,27 @@
 #!/usr/bin/python3
-""" A script that starts an API"""
-
-
-from api.v1.views import app_views
-from flask import Flask, make_response, jsonify, render_template, url_for
-from models import storage
+"""app.py to connect to API"""
 import os
-from werkzeug.exceptions import HTTPException
+from models import storage
+from api.v1.views import app_views
+from flask import Flask, Blueprint, jsonify, make_response
+from flask_cors import CORS
+
 
 app = Flask(__name__)
-
 app.register_blueprint(app_views)
-
-app.url_map.strict_slashes = False
-
-port = os.getenv('HBNB_API_PORT', 5000)
-host = os.getenv('HBNB_API_HOST', '0.0.0.0')
+cors = CORS(app, resources={"/*": {"origins": "0.0.0.0"}})
 
 
 @app.teardown_appcontext
-def close_db(exception):
-    """Closes the storage engine"""
+def teardown_appcontext(code):
+    """teardown_appcontext"""
     storage.close()
 
 
-@app.errorhandler(Exception)
-def error_handler(e):
-    """Handles errors i.e the 404 page"""
-    if isinstance(e, HTTPException):
-        if type(e).__name__ == 'NotFound':
-            e.description = 'Not found'
-        response = {"error": e.description}
-        error_code = e.code
-    else:
-        response = {"error": e}
-        error_code = 500
-    return make_response(jsonify(response), error_code)
-
+@app.errorhandler(404)
+def page_not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == "__main__":
-    """Runs the app in the command line"""
-    app.run(threade=True, host=host, port=port)
+    app.run(host=os.getenv('HBNB_API_HOST', '0.0.0.0'),
+            port=int(os.getenv('HBNB_API_PORT', '5000')))
