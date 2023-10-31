@@ -14,8 +14,8 @@ app.register_blueprint(app_views)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
-host=environ.get('HBNB_API_HOST')
-port=environ.get('HBNB_API_PORT')
+host = environ.get('HBNB_API_HOST')
+port = environ.get('HBNB_API_PORT')
 
 
 @app.teardown_appcontext
@@ -33,6 +33,7 @@ def not_found(error):
         description: a resource was not found
     """
     return make_response(jsonify({'error': "Not found"}), 404)
+
 
 app.config['SWAGGER'] = {
     'title': 'AirBnB clone Restful API',
