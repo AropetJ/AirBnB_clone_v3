@@ -26,14 +26,14 @@ class FileStorage:
 
     def all(self, cls=None):
         """returns the dictionary __objects"""
-        if not cls:
-            return self.__objects
-        elif type(cls) == str:
-            return {k: v for k, v in self.__objects.items()
-                    if v.__class__.__name__ == cls}
+        if cls is not None:
+            new_objs = {}
+            for clsid, obj in FileStorage.__objects.items():
+                if type(obj).__name__ == cls:
+                    new_objs[clsid] = obj
+            return new_objs
         else:
-            return {k: v for k, v in self.__objects.items()
-                    if v.__class__ == cls}
+            return FileStorage.__objects
 
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
