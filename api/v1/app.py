@@ -17,6 +17,7 @@ app.url_map.strict_slashes = False
 port = os.getenv('HBNB_API_PORT', 5000)
 host = os.getenv('HBNB_API_HOST', '0.0.0.0')
 
+
 @app.teardown_appcontext
 def close_db(exception):
     """Closes the storage engine"""
@@ -39,4 +40,4 @@ def error_handler(e):
 
 if __name__ == "__main__":
     """Runs the app in the command line"""
-    app.run(threade = True, host=host, port=port)
+    app.run(threade=True, host=host, port=port)
