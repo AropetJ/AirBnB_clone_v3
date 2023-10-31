@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Starts a Flask Application """
+""" Flask Application """
 from models import storage
 from api.v1.views import app_views
 from os import environ
@@ -9,16 +9,14 @@ from flasgger import Swagger
 from flasgger.utils import swag_from
 
 app = Flask(__name__)
-app.register_blueprint(app_views)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+app.register_blueprint(app_views)
 cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-host = environ.get('HBNB_API_HOST')
-port = environ.get('HBNB_API_PORT')
 
 
 @app.teardown_appcontext
 def close_db(error):
-    """ Closes the Storage """
+    """ Close Storage """
     storage.close()
 
 
@@ -32,7 +30,6 @@ def not_found(error):
     """
     return make_response(jsonify({'error': "Not found"}), 404)
 
-
 app.config['SWAGGER'] = {
     'title': 'AirBnB clone Restful API',
     'uiversion': 3
@@ -42,7 +39,9 @@ Swagger(app)
 
 
 if __name__ == "__main__":
-    """Runs the app on the commandline"""
+    """ Main Function """
+    host = environ.get('HBNB_API_HOST')
+    port = environ.get('HBNB_API_PORT')
     if not host:
         host = '0.0.0.0'
     if not port:
