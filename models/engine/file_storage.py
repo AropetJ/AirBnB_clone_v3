@@ -56,14 +56,14 @@ class FileStorage:
         try:
             with open(fname, mode='r', encoding='utf-8') as f_io:
                 new_objs = json.load(f_io)
-        except:
+        except Exception as e:
             return
         for o_id, d in new_objs.items():
             k_cls = d['__class__']
             FileStorage.__objects[o_id] = FileStorage.CNC[k_cls](**d)
 
     def delete(self, obj=None):
-        """delete obj from __objects if it’s inside"""
+        """delete obj from __objects if its inside"""
         if obj:
             obj_ref = "{}.{}".format(type(obj).__name__, obj.id)
             all_class_objs = self.all(obj.__class__.__name__)
