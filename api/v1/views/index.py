@@ -23,7 +23,8 @@ def status():
 @app_views.route('/stats', methods=['GET'], strict_slashes=False)
 def stats():
     """ Retrieves the number of each objects by type """
-    class_names = ["amenities", "cities", "places", "reviews", "states", "users"]
+    class_names = ["amenities", "cities", "places", "reviews",
+                   "states", "users"]
     classes = [Amenity, City, Place, Review, State, User]
 
     num_objts = {}
