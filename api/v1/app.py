@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""Starts a Flask Application"""
-
+""" Starts a Flask Application """
 from models import storage
 from api.v1.views import app_views
 from os import environ
@@ -13,7 +12,6 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
-
 host = environ.get('HBNB_API_HOST')
 port = environ.get('HBNB_API_PORT')
 
