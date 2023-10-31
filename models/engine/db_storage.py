@@ -4,17 +4,15 @@ Contains the class DBStorage
 """
 
 import os
-import models
+from models.base_model import Base
 from models.amenity import Amenity
-from models.base_model import BaseModel, Base
 from models.city import City
 from models.place import Place
-from models.review import Review
 from models.state import State
+from models.review import Review
 from models.user import User
-import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 classes = {"Amenity": Amenity, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
@@ -40,17 +38,17 @@ class DBStorage:
         """query on the current database session"""
         if not self.__session:
             self.reload()
-        new_dict = {}
+        objects = {}
         if type(cls) == str:
             cls = classes.get(cls, None)
         if cls:
             for obj in self.__session.query(cls):
-                new_dict[obj.__class__.__name__ + '.' + obj.id] = obj
+                objects[obj.__class__.__name__ + '.' + obj.id] = obj
         else:
             for cls in classes.values():
                 for obj in self.__session.query(cls):
-                    new_dict[obj.__class__.__name__ + '.' + obj.id] = obj
-        return new_dict
+                    objects[obj.__class__.__name__ + '.' + obj.id] = obj
+        return objects
 
     def new(self, obj):
         """add the object to the current database session"""
@@ -62,15 +60,17 @@ class DBStorage:
 
     def delete(self, obj=None):
         """delete from the current database session obj if not None"""
-        if obj is not None:
+        if not self.__session:
+            self.reload()
+        if obj:
             self.__session.delete(obj)
 
     def reload(self):
         """reloads data from the database"""
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Base.metadata.create_all(self.__engine)
-        sess_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        Session = scoped_session(sess_factory)
-        self.__session = Session
+        self.__session = scoped_session(session_factory)
 
     def close(self):
         """call remove() method on the private session attribute"""
@@ -88,4 +88,11 @@ class DBStorage:
 
     def count(self, cls=None):
         """A method to count the number of objects in storage"""
-        return (len(self.all(cls)))
+        total = 0
+        if type(cls) == str and cls in classes:
+            cls = classes[cls]
+            total = self.__session.query(cls).count()
+        elif cls is None:
+            for cls in classes.values():
+                total += self.__session.query(cls).count()
+        return total
