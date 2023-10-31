@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-""" objects that handle all default RestFul API actions for Reviews """
+"""
+Create a new view for State objects that handles all
+default RESTFul API actions
+"""
 from models.review import Review
 from models.place import Place
 from models.user import User
@@ -12,26 +15,21 @@ from flasgger.utils import swag_from
 @app_views.route('/places/<place_id>/reviews', methods=['GET'],
                  strict_slashes=False)
 @swag_from('documentation/reviews/get_reviews.yml', methods=['GET'])
-def get_reviews(place_id):
-    """
-    Retrieves the list of all Review objects of a Place
-    """
+def retrieve_reviews(place_id):
+    """Retrieves the list of all Review objects of a Place"""
     place = storage.get(Place, place_id)
 
     if not place:
         abort(404)
 
     reviews = [review.to_dict() for review in place.reviews]
-
     return jsonify(reviews)
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'], strict_slashes=False)
 @swag_from('documentation/reviews/get_review.yml', methods=['GET'])
-def get_review(review_id):
-    """
-    Retrieves a Review object
-    """
+def retrieve_review(review_id):
+    """Retrieves a Review object based on the id"""
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
@@ -43,28 +41,21 @@ def get_review(review_id):
                  strict_slashes=False)
 @swag_from('documentation/reviews/delete_reviews.yml', methods=['DELETE'])
 def delete_review(review_id):
-    """
-    Deletes a Review Object
-    """
-
+    """Deletes a Review Object"""
     review = storage.get(Review, review_id)
-
     if not review:
         abort(404)
 
     storage.delete(review)
     storage.save()
-
     return make_response(jsonify({}), 200)
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
 @swag_from('documentation/reviews/post_reviews.yml', methods=['POST'])
-def post_review(place_id):
-    """
-    Creates a Review
-    """
+def create_review(place_id):
+    """Creates a Review with an id"""
     place = storage.get(Place, place_id)
 
     if not place:
@@ -93,10 +84,8 @@ def post_review(place_id):
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'], strict_slashes=False)
 @swag_from('documentation/reviews/put_reviews.yml', methods=['PUT'])
-def put_review(review_id):
-    """
-    Updates a Review
-    """
+def update_review(review_id):
+    """Updates a Review based on a given id"""
     review = storage.get(Review, review_id)
 
     if not review:
