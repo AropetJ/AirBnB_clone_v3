@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-""" Flask Application """
+"""Starts a Flask Application"""
+
 from models import storage
 from api.v1.views import app_views
 from os import environ
@@ -9,14 +10,17 @@ from flasgger import Swagger
 from flasgger.utils import swag_from
 
 app = Flask(__name__)
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.register_blueprint(app_views)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+
+host=environ.get('HBNB_API_HOST')
+port=environ.get('HBNB_API_PORT')
 
 
 @app.teardown_appcontext
 def close_db(error):
-    """ Close Storage """
+    """ Closes the Storage """
     storage.close()
 
 
@@ -39,9 +43,7 @@ Swagger(app)
 
 
 if __name__ == "__main__":
-    """ Main Function """
-    host = environ.get('HBNB_API_HOST')
-    port = environ.get('HBNB_API_PORT')
+    """Runs the app on the commandline"""
     if not host:
         host = '0.0.0.0'
     if not port:
