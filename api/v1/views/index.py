@@ -8,7 +8,7 @@ from flask import jsonify, request
 from models import storage
 
 
-@app_views.route('/status', methods = ['GET'])
+@app_views.route('/status', methods=['GET'])
 def status():
     """A function that returns a JSON status: OK
     """
@@ -17,7 +17,7 @@ def status():
         return jsonify(response)
 
 
-@app_views.route('/api/v1/stats', methods = ['GET'])
+@app_views.route('/api/v1/stats', methods=['GET'])
 def stats():
     """A function that retrieves the number of each objects bu type"""
     if request.method == 'GET':
